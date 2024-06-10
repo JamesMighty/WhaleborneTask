@@ -28,7 +28,6 @@ public class UITestingPlaygroundPage {
         private final String name;
     }
 
-
     public UITestingPlaygroundPage(Page page) {
         this.page = page;
 
@@ -64,7 +63,6 @@ public class UITestingPlaygroundPage {
     }
 
     public class SampleApp implements UITestingApp {
-
         private final Locator sampleAppStatusSelector;
         private final Locator userInput;
         private final Locator passwordInput;
@@ -104,8 +102,6 @@ public class UITestingPlaygroundPage {
         public void Login() {
             loginButton.click();
         }
-
-
     }
 
     public class LoadDelay implements UITestingApp {
@@ -132,7 +128,6 @@ public class UITestingPlaygroundPage {
     }
 
     public class ProgressBar implements UITestingApp {
-
         private final Locator startButton;
         private final Locator stopButton;
         private final Locator progress;
@@ -160,22 +155,20 @@ public class UITestingPlaygroundPage {
             stopButton.click();
         }
 
-        public String GetProgress() {
-            return progress.getAttribute("aria-valuenow");
+        public int GetProgress() {
+            return Integer.parseInt(progress.getAttribute("aria-valuenow"));
         }
 
         public String GetResult() {
             return result.innerText();
         }
 
-        public void AwaitProgress(String prog, double timeout, double polling) {
+        public void AwaitProgress(int expectedProgress, long timeoutSeconds, double polling) {
             Instant start = Instant.now();
-            while (Duration.between(start, Instant.now()).getSeconds() < timeout) {
-                if (progress.innerText().equals(prog)) return;
+            while (Duration.between(start, Instant.now()).getSeconds() < timeoutSeconds) {
+                if (GetProgress() >= expectedProgress) return;
                 page.waitForTimeout(polling);
             }
         }
     }
-
-
 }

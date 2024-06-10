@@ -36,6 +36,8 @@ public class WhaleboneTeamsTest extends WhaleboneTeamsTestBase {
             "Pittsburgh Penguins",
             "Washington Capitals"
     );
+    public static final String TEAM = "Team";
+    public static final String ROSTER = "Roster";
 
 
     private List<Team> teamList;
@@ -79,7 +81,7 @@ public class WhaleboneTeamsTest extends WhaleboneTeamsTestBase {
 
         assert filtered.size() > 0 : "Expected at least one city with more than one team, but found none";
 
-        final List<String> teamsNames = filtered.stream().map(Map.Entry::getKey).collect(Collectors.toList());
+        final List<String> teamsNames = filtered.stream().map(Map.Entry::getKey).toList();
 
         Assert.assertEquals(teamsNames, CITIES_WITH_MULTIPLE_TEAMS);
     }
@@ -98,7 +100,7 @@ public class WhaleboneTeamsTest extends WhaleboneTeamsTestBase {
         assert metropolitanDivisionTeams.isPresent();
 
         final List<String> teamNames = metropolitanDivisionTeams.get().stream()
-                .map(Team::name).collect(Collectors.toList());
+                .map(Team::name).toList();
 
         Assert.assertEquals(teamNames, METROPOLITAN_DIVISION_TEAMS);
     }
@@ -122,8 +124,8 @@ public class WhaleboneTeamsTest extends WhaleboneTeamsTestBase {
 
         mcPage.navigate();
         mcPage.changeLang(MCPage.Language.ENGLISH);
-        mcPage.selectInNav("Team");
-        mcPage.selectInMenu("Roster");
+        mcPage.selectInNav(TEAM);
+        mcPage.selectInMenu(ROSTER);
 
         final List<String> states = mcPage.scrapeRoster();
 
@@ -137,6 +139,7 @@ public class WhaleboneTeamsTest extends WhaleboneTeamsTestBase {
 
         Assert.assertTrue(canPlayers > usaPlayers);
 
+        browser.close();
         playwright.close();
     }
 

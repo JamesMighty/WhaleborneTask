@@ -26,34 +26,43 @@ public class UITestingTest {
 
     private static final double LOAD_TIMEOUT = 10 * 1000;
 
-    private static final String PROGRESS_BAR_EXPECTED_VALUE = "75%";
-    public static final int PROGRESS_BAR_TIMEOUT = 60 * 60 * 1000;
+    private static final int PROGRESS_BAR_EXPECTED_VALUE = 75;
+    public static final int PROGRESS_BAR_TIMEOUT = 10 * 60;
     public static final int POLLING = 100;
 
     private UITestingPlaygroundPage playgroundPage;
 
     private Playwright playwright;
+    private Browser browser;
 
     @BeforeClass
     public void Setup() {
-        try (Playwright playwright = Playwright.create()) {
-            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
-            this.playwright = playwright;
-            final Page page = browser.newPage();
-            playgroundPage = new UITestingPlaygroundPage(page);
-        }
+        playwright = Playwright.create();
+        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        final Page page = browser.newPage();
+        playgroundPage = new UITestingPlaygroundPage(page);
     }
 
     @AfterClass
     public void CleanUpClass(){
-        playwright.close();
+        if (browser != null) {
+            browser.close();
+        }
+        if (playwright != null) {
+            playwright.close();
+        }
     }
 
     @BeforeMethod
-    public void CleanUp() {
+    public void SetupBeforeTest() {
         playgroundPage.Navigate();
     }
 
+    /**
+     * from the Home page
+     * navigate to the Sample App page
+     * cover all the functionalities of that feature by tests
+     */
     @Test
     public void VerifySampleApp() {
         final UITestingPlaygroundPage.SampleApp sampleApp =
@@ -90,6 +99,11 @@ public class UITestingTest {
         );
     }
 
+    /**
+     * from the Home page
+     * click on the Load Delay
+     * verify the page will get loaded in reasonable time
+     */
     @Test
     public void VerifyLoadDelayApp() {
         final UITestingPlaygroundPage.LoadDelay loadDelayApp =
@@ -100,6 +114,11 @@ public class UITestingTest {
         Assert.assertTrue(loadDelayApp.IsButtonLoaded());
     }
 
+    /**
+     * from the Home page
+     * navigate to the Progress Bar page
+     * follow the instructions specified in the Scenario section
+     */
     @Test void VerifyProgressBarApp() {
         final UITestingPlaygroundPage.ProgressBar progressBarApp =
                 (UITestingPlaygroundPage.ProgressBar) playgroundPage.SelectInMenu(PROGRESS_BAR);
